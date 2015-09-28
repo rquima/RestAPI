@@ -27,18 +27,31 @@ class ViewController: UIViewController {
         let session = NSURLSession.sharedSession()
         
         let task = session.dataTaskWithRequest(request1, completionHandler: { (data, response, error) -> Void in
-            if error != nil {
-               // println("error: \(error.localizedDescription): \(error.userInfo)")
-            }
-            else if data != nil {
-                if let str = NSString(data: data!, encoding: NSUTF8StringEncoding) {
-                    print("Received data:\n\(str)")
+            if error == nil {
+                do {
+                    let anyObj = try NSJSONSerialization.JSONObjectWithData(data!, options: []) as! [String:AnyObject]
+                    // use anyObj here
+                 //   let results:[AnyObject]() = anyObj["results"]
+                    
+                    if let results = anyObj["results"] as? NSArray {
+                        // do something with results
+                        for obj : AnyObject in results {
+                            let idCategory  = obj["idCategory"]
+                            let description = obj["description"]
+                           // let idCategory = obj["idCategory"]
+                            print("obj: \(idCategory) \(description)")
+                      
+                           
+                        }
+                    }
+                    
+                    
+                   // print("json error: \(results)")
+                } catch {
+                    print("json error: \(error)")
                 }
-                else {
-                    print("unable to convert data to text")
-                }
             }
-        })
+})
         
         task.resume()
     }
